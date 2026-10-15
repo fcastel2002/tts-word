@@ -1,9 +1,36 @@
+/* Colores del tema de Word: theme.ts los pisa con Office.context.officeTheme.
+   Los de abajo son el respaldo si Office no informa el tema. */
+:root {
+  --bg: #ffffff;
+  --fg: #201f1e;
+  --control-bg: #ffffff;
+  --control-fg: #201f1e;
+  --border: #8a8886;
+  --accent: #2b579a;
+  --accent-fg: #ffffff;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #262626;
+    --fg: #f3f2f1;
+    --control-bg: #3b3a39;
+    --control-fg: #f3f2f1;
+    --border: #8a8886;
+    --accent: #4f8fe6;
+    --accent-fg: #000000;
+    color-scheme: dark;
+  }
+}
+
 body {
   margin: 0;
   padding: 16px;
   font-family: "Segoe UI", sans-serif;
   font-size: 16px;
-  color: #201f1e;
+  background: var(--bg);
+  color: var(--fg);
 }
 
 h1 {
@@ -22,16 +49,17 @@ button {
   flex: 1;
   padding: 12px 8px;
   font-size: 16px;
-  border: 1px solid #8a8886;
+  border: 1px solid var(--border);
   border-radius: 4px;
-  background: #fff;
+  background: var(--control-bg);
+  color: var(--control-fg);
   cursor: pointer;
 }
 
 button.primary {
-  background: #2b579a;
-  border-color: #2b579a;
-  color: #fff;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-fg);
 }
 
 button:disabled {
@@ -50,6 +78,15 @@ select {
   width: 100%;
   margin-top: 6px;
   font-size: 16px;
+  accent-color: var(--accent);
+}
+
+select {
+  padding: 4px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--control-bg);
+  color: var(--control-fg);
 }
 
 #status {

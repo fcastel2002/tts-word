@@ -1,11 +1,12 @@
 /* eslint-disable no-undef */
 
 const devCerts = require("office-addin-dev-certs");
+const webpack = require("webpack");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 const urlDev = "https://localhost:3000/";
-const urlProd = "https://www.contoso.com/"; // CHANGE THIS TO YOUR PRODUCTION DEPLOYMENT LOCATION
+const urlProd = "https://localhost:8766/"; // el helper instalado sirve dist/ (ver installer/)
 
 async function getHttpsOptions() {
   const httpsOptions = await devCerts.getHttpsServerOptions();
@@ -51,6 +52,9 @@ module.exports = async (env, options) => {
       ],
     },
     plugins: [
+      new webpack.DefinePlugin({
+        __HELPER_URL__: JSON.stringify(dev ? "http://127.0.0.1:8766" : ""),
+      }),
       new HtmlWebpackPlugin({
         filename: "taskpane.html",
         template: "./src/taskpane/taskpane.html",
@@ -69,7 +73,13 @@ module.exports = async (env, options) => {
               if (dev) {
                 return content;
               } else {
-                return content.toString().replace(new RegExp(urlDev, "g"), urlProd);
+                const manifest = content.toString();
+                // Word guarda los íconos de la cinta por URL y no los vuelve a pedir aunque cambie
+                // <Version>: versionar la URL hace que cada versión muestre los íconos actuales.
+                const version = manifest.match(/<Version>([^<]+)<\/Version>/)[1];
+                return manifest
+                  .replace(new RegExp(urlDev, "g"), urlProd)
+                  .replace(/\.png"/g, `.png?v=${version}"`);
               }
             },
           },

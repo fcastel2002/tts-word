@@ -8,6 +8,7 @@ import base64
 import io
 import logging
 import os
+import sys
 import wave
 from functools import lru_cache
 from pathlib import Path
@@ -15,18 +16,24 @@ from pathlib import Path
 import edge_tts
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from piper import PiperVoice
 from pydantic import BaseModel
 
 log = logging.getLogger("tts-helper")
 
-VOICES_DIR = Path(os.environ.get("TTS_PIPER_VOICES_DIR", Path(__file__).parent / "voices"))
+# Empaquetado con PyInstaller los datos están en sys._MEIPASS; en desarrollo, junto a este archivo.
+BASE_DIR = Path(getattr(sys, "_MEIPASS", Path(__file__).parent))
+VOICES_DIR = Path(os.environ.get("TTS_PIPER_VOICES_DIR", BASE_DIR / "voices"))
+WEB_DIR = BASE_DIR / "web"  # addin/dist; solo existe en el ejecutable instalado
 DEFAULT_EDGE_VOICE = "es-AR-ElenaNeural"
 DEFAULT_PIPER_VOICE = "es_AR-daniela-high"
 EDGE_TIMEOUT_S = 15
 TICKS_PER_SECOND = 10_000_000  # edge-tts usa unidades de 100 ns
 
 app = FastAPI(title="TTS Word helper")
+# El helper instalado sirve el panel desde su mismo origen y no necesita CORS;
+# esto es para el dev server de `npm start`.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["https://localhost:3000"],
@@ -125,6 +132,11 @@ async def synthesize(req: SynthesisRequest):
         return await asyncio.to_thread(synthesize_piper, req.text, req.piper_voice)
     except FileNotFoundError as exc:
         raise HTTPException(503, str(exc))
+
+
+# Va al final: montado en "/" atrapa todo lo que no matcheó una ruta de la API.
+if WEB_DIR.is_dir():
+    app.mount("/", StaticFiles(directory=WEB_DIR, html=True), name="web")
 
 
 if __name__ == "__main__":

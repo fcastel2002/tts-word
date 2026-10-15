@@ -2,7 +2,10 @@
 
 // Cliente del servicio local de síntesis (helper/app.py).
 
-export const HELPER_URL = "http://127.0.0.1:8766";
+// Lo define webpack: en desarrollo el helper corre aparte (http://127.0.0.1:8766); instalado,
+// el mismo helper sirve el panel y la URL es relativa ("").
+declare const __HELPER_URL__: string;
+export const HELPER_URL = __HELPER_URL__;
 
 export interface SpokenWord {
   text: string;

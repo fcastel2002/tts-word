@@ -3,3 +3,5 @@ addin/dist/
 .venv/
 __pycache__/
 helper/voices/
+installer/build/
+installer/Output/

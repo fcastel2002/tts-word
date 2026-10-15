@@ -2,6 +2,7 @@
 
 import { HelperUnavailableError, synthesize } from "./synth";
 import type { SpokenWord, Synthesis } from "./synth";
+import { followOfficeTheme } from "./theme";
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 
@@ -18,6 +19,7 @@ let nextParagraph = 0; // dónde retomar después de "Detener"
 
 Office.onReady((info) => {
   if (info.host !== Office.HostType.Word) return;
+  followOfficeTheme();
   $("sideload-msg").hidden = true;
   $("app-body").hidden = false;
 
