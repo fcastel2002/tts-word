@@ -1,0 +1,64 @@
+name: Release
+
+# Publicar: subir <Version> en addin/manifest.xml, commitear y pushear un tag vX.Y.Z
+# con las tres primeras partes de esa versión (p. ej. 1.0.3.0 → v1.0.3).
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  installer:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Check tag matches manifest version
+        run: |
+          $version = ([xml](Get-Content addin/manifest.xml)).OfficeApp.Version
+          $expected = "v" + (($version -split '\.')[0..2] -join '.')
+          if ($expected -ne "${{ github.ref_name }}") {
+            throw "Tag ${{ github.ref_name }} doesn't match manifest version $version (expected $expected)"
+          }
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: addin/package-lock.json
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+
+      - name: Install add-in dependencies
+        working-directory: addin
+        run: npm ci
+
+      # build.ps1 espera el venv en helper/.venv y la voz en helper/voices.
+      - name: Set up helper
+        working-directory: helper
+        run: |
+          python -m venv .venv
+          .venv\Scripts\python -m pip install -r requirements-build.txt
+          .venv\Scripts\python -m piper.download_voices es_AR-daniela-high --download-dir voices
+
+      - name: Install Inno Setup
+        run: |
+          if (-not (Test-Path "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe")) {
+            choco install innosetup -y --no-progress
+          }
+
+      - name: Build installer
+        run: ./installer/build.ps1
+
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ github.ref_name }}" installer/Output/TTSWord-Setup.exe `
+            --title "TTS Word ${{ github.ref_name }}" --generate-notes

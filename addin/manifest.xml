@@ -8,7 +8,7 @@
   <Description DefaultValue="Lee el documento en voz alta con voces naturales y marca la palabra que se está leyendo."/>
   <IconUrl DefaultValue="https://localhost:3000/assets/icon-32.png"/>
   <HighResolutionIconUrl DefaultValue="https://localhost:3000/assets/icon-64.png"/>
-  <SupportUrl DefaultValue="https://localhost:3000/taskpane.html"/>
+  <SupportUrl DefaultValue="https://github.com/fcastel2002/tts-word/issues"/>
   <Hosts>
     <Host Name="Document"/>
   </Hosts>

@@ -76,6 +76,8 @@ El logo (`addin/assets/*.png` e `installer/tts-word.ico`) se dibuja con `python 
 
 Deja `installer/Output/TTSWord-Setup.exe` (~165 MB). Para publicar una versión nueva, subir `<Version>` en `addin/manifest.xml`: es también la versión del instalador.
 
+**Releases en GitHub** (`fcastel2002/tts-word`): `.github/workflows/release.yml` corre `build.ps1` en `windows-latest` al pushear un tag `vX.Y.Z` y adjunta el `.exe` a un release. El tag tiene que coincidir con las tres primeras partes de `<Version>` (1.0.3.0 → `v1.0.3`) o el workflow falla. `ci.yml` corre lint, tipos y build del add-in en cada PR.
+
 Qué hace el instalador (pide permisos de administrador una vez):
 1. Copia el helper a `C:\Program Files\TTS Word\` (cierra antes uno que esté corriendo).
 2. Corre `tts-helper.exe --generate-cert` y agrega la CA a `LocalMachine\Root` con `certutil` (antes borra una CA anterior con el mismo nombre).
