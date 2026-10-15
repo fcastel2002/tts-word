@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Leer en voz alta</title>
+
+    <!-- Office JavaScript API -->
+    <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+
+    <link href="taskpane.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+    <section id="sideload-msg">
+        <p>Abrí este panel desde Word.</p>
+    </section>
+    <main id="app-body" hidden>
+        <h1>Leer en voz alta</h1>
+
+        <div class="buttons">
+            <button id="play" class="primary">▶ Leer</button>
+            <button id="pause" disabled>⏸ Pausa</button>
+            <button id="stop" disabled>⏹ Detener</button>
+        </div>
+
+        <label for="rate">Velocidad <output id="rate-value">1.0×</output></label>
+        <input id="rate" type="range" min="0.5" max="2" step="0.1" value="1" />
+
+        <label for="volume">Volumen <output id="volume-value">100%</output></label>
+        <input id="volume" type="range" min="0" max="1" step="0.05" value="1" />
+
+        <label for="voice">Voz</label>
+        <select id="voice">
+            <option value="es-AR-ElenaNeural">Elena (Argentina)</option>
+            <option value="es-AR-TomasNeural">Tomás (Argentina)</option>
+            <option value="es-ES-ElviraNeural">Elvira (España)</option>
+            <option value="es-ES-AlvaroNeural">Álvaro (España)</option>
+            <option value="es-MX-DaliaNeural">Dalia (México)</option>
+            <option value="es-MX-JorgeNeural">Jorge (México)</option>
+        </select>
+
+        <p id="status" role="status"></p>
+    </main>
+</body>
+
+</html>

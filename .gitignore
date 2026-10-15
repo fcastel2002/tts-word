@@ -1,0 +1,5 @@
+node_modules/
+addin/dist/
+.venv/
+__pycache__/
+helper/voices/
